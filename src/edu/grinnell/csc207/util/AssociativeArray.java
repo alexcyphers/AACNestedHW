@@ -35,7 +35,7 @@ public class AssociativeArray<K, V> {
   /**
    * The array of key/value pairs.
    */
-  KVPair<K, V>[] pairs;
+  public KVPair<K, V>[] pairs;
 
   // +--------------+------------------------------------------------
   // | Constructors |
@@ -226,6 +226,15 @@ public class AssociativeArray<K, V> {
 
     this.size--;
   } // remove(K)
+
+
+  public String[] getKeys() {
+    String[] keys = new String[this.size];
+    for (int i = 0; i < this.size; i++) {
+        keys[i] = this.pairs[i].key.toString();
+    }
+    return keys;
+  }
 
   /**
    * Determine how many key/value pairs are in the associative array.
