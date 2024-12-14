@@ -228,13 +228,10 @@ public class AssociativeArray<K, V> {
   } // remove(K)
 
 
-  public KVPair<K,V> getPair(int i) {
-    return this.pairs[i];
+  public KVPair<K,V> getPair(int index) {
+    return this.pairs[index];
   }
 
-  public K getKey() {
-    return this.key;
-  }
 
   /**
    * Determine how many key/value pairs are in the associative array.

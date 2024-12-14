@@ -46,7 +46,7 @@ public class AACMappings implements AACPage {
 			if (line.startsWith(">")) {
 				String[] text = line.substring(1).split(" ", 2);
 				if (tempLoc != null) {
-					tempLoc.addItem(text[0], text[1])
+					tempLoc.addItem(text[0], text[1]);
 				} // if
 			} else {
 				String[] text = line.split(" ", 2);
@@ -121,17 +121,16 @@ public class AACMappings implements AACPage {
 	 * AAC mapping to
 	 */
 	public void writeToFile(String filename) {
-		Printwriter pen = new Printwriter(new File(filename));
+		PrintWriter pen = new Printwriter(new File(filename));
 		for (int i = 0; i < this.locs.size(); i++) {
 			KVPair<String, AACCategory> pair = this.locs.getPair(i);
 			String name = pair.getKey();
 			AACCategory category = this.categories.pair.get(pair.getKey());
 			pen.println(name + " " + category.getCategory());
 			String[] imageLocs = category.getImageLocs();
-			for (int i = 0; j < imageLocs.length; j++) {
+			for (int j = 0; j < imageLocs.length; j++) {
 				pen.println(">" + imageLocs[j] + " " + category.select(imageLocs[j]));
 			}
-			
 		}
 	}
 	
@@ -142,7 +141,7 @@ public class AACMappings implements AACPage {
 	 * @param text the text associated with the image
 	 */
 	public void addItem(String imageLoc, String text) {
-		return this.currLoc.addItem(imageLoc, text);
+		this.currLoc.addItem(imageLoc, text);
 	}
 
 
@@ -164,6 +163,6 @@ public class AACMappings implements AACPage {
 	 * can be displayed, false otherwise
 	 */
 	public boolean hasImage(String imageLoc) {
-		return this.currLoc.hasImage()
+		return this.currLoc.hasImage(imageLoc);
 	}
 }

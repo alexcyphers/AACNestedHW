@@ -62,6 +62,11 @@ class KVPair<K, V> {
     return new KVPair<K, V>(this.key, this.val);
   } // clone()
 
+
+  public K getKey() {
+    return this.key;
+  }
+
   /**
    * Convert the key/value pair to a string (e.g., for printing).
    *
