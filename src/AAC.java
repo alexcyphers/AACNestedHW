@@ -72,7 +72,7 @@ public class AAC implements ActionListener {
 	public void loadImages(int width, int length) {
 		Container pane = frame.getContentPane();
 		pane.removeAll();
-
+		
 		// add options to go to home screen
 		JPanel topPanel = new JPanel();
 		topPanel.setLayout(new GridBagLayout());
