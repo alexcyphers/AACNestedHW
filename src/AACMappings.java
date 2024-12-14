@@ -6,10 +6,14 @@
  * and updating the set of images that would be shown and handling
  * an interactions.
  * 
- * @author Catie Baker & YOUR NAME HERE
+ * @author Catie Baker & Alex Cyphers
  *
  */
 public class AACMappings implements AACPage {
+
+	private AssociativeArray<String, AACCategory> locs;
+	private AACCategory currLoc;
+	private AACCategory defaultLoc;
 	
 	/**
 	 * Creates a set of mappings for the AAC based on the provided
@@ -32,7 +36,24 @@ public class AACMappings implements AACPage {
 	 * @param filename the name of the file that stores the mapping information
 	 */
 	public AACMappings(String filename) {
-
+		this.locs = new AssociativeArray<>();
+		this.defaultLoc = new AACCategory("");
+		this.currLoc = this.defaultLoc;
+		Scanner scanner = new Scanner(new File(filename));
+		AACCategory tempLoc = null;
+		while (scanner.hasNextLine()) {
+			String line = scanner.nextLine();
+			if (line.startsWith(">")) {
+				String[] text = line.substring(1).split(" ", 2);
+				if (tempLoc != null) {
+					tempLoc.addItem(text[0], text[1])
+				} // if
+			} else {
+				String[] text = line.split(" ", 2);
+				tempLoc = new AACCategory(parts[1]);
+				this.locs.set(text[0], tempLoc);
+			}
+		}
 	}
 	
 	/**
@@ -50,7 +71,15 @@ public class AACMappings implements AACPage {
 	 * category
 	 */
 	public String select(String imageLoc) {
-		return null;
+		if (this.currLoc == this.defaultLoc) {
+			try {
+				this.currLoc = this.locs.get(imageLoc)
+			} catch (NoSuchElementException e) {
+				return this.currLoc.select(imageLoc);
+			}
+		} else {
+			return this.currLoc.select(imageLoc);
+		}
 	}
 	
 	/**
@@ -59,7 +88,7 @@ public class AACMappings implements AACPage {
 	 * it should return an empty array
 	 */
 	public String[] getImageLocs() {
-		return null;
+		return this.currLoc.getImageLocs();
 	}
 	
 	/**
@@ -67,7 +96,7 @@ public class AACMappings implements AACPage {
 	 * category
 	 */
 	public void reset() {
-
+		this.currLoc = this.defaultLoc;
 	}
 	
 	
@@ -92,7 +121,18 @@ public class AACMappings implements AACPage {
 	 * AAC mapping to
 	 */
 	public void writeToFile(String filename) {
-		
+		Printwriter pen = new Printwriter(new File(filename));
+		for (int i = 0; i < this.locs.size(); i++) {
+			KVPair<String, AACCategory> pair = this.locs.getPair(i);
+			String name = pair.getKey();
+			AACCategory category = this.categories.pair.get(pair.getKey());
+			pen.println(name + " " + category.getCategory());
+			String[] imageLocs = category.getImageLocs();
+			for (int i = 0; j < imageLocs.length; j++) {
+				pen.println(">" + imageLocs[j] + " " + category.select(imageLocs[j]));
+			}
+			
+		}
 	}
 	
 	/**
@@ -102,7 +142,7 @@ public class AACMappings implements AACPage {
 	 * @param text the text associated with the image
 	 */
 	public void addItem(String imageLoc, String text) {
-		
+		return this.currLoc.addItem(imageLoc, text);
 	}
 
 
@@ -112,7 +152,7 @@ public class AACMappings implements AACPage {
 	 * on the default category
 	 */
 	public String getCategory() {
-		return null;
+		return this.currLoc.getCategory();
 	}
 
 
@@ -124,6 +164,6 @@ public class AACMappings implements AACPage {
 	 * can be displayed, false otherwise
 	 */
 	public boolean hasImage(String imageLoc) {
-		return false;
+		return this.currLoc.hasImage()
 	}
 }

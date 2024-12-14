@@ -228,12 +228,12 @@ public class AssociativeArray<K, V> {
   } // remove(K)
 
 
-  public String[] getKeys() {
-    String[] keys = new String[this.size];
-    for (int i = 0; i < this.size; i++) {
-        keys[i] = this.pairs[i].key.toString();
-    }
-    return keys;
+  public KVPair<K,V> getPair(int i) {
+    return this.pairs[i];
+  }
+
+  public K getKey() {
+    return this.key;
   }
 
   /**

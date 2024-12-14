@@ -31,11 +31,7 @@ public class AACCategory implements AACPage {
 	 * @param text the text that image should speak
 	 */
 	public void addItem(String imageLoc, String text) {
-		try {
-			this.locs.set(imageLoc, text);
-		} catch (NullKeyException e) {
-			// Null Key
-		} // try/catch
+		this.locs.set(imageLoc, text);
 	}
 
 	/**
@@ -44,7 +40,13 @@ public class AACCategory implements AACPage {
 	 * it should return an empty array
 	 */
 	public String[] getImageLocs() {
-		return this.locs.getKeys();
+		String[] keys = new String[locs.size()];
+		for (int i = 0; i < keys.length; i++) {
+			KVPair <K,V> pair = this.locs.getPair(i);
+			K currKey = pair.getKey();
+			keys[i] = currKey.toString();
+		}
+		return keys;
 	}
 
 	/**
