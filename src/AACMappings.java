@@ -1,3 +1,18 @@
+import java.util.NoSuchElementException;
+import java.util.Scanner;
+
+import edu.grinnell.csc207.util.AssociativeArray;
+import edu.grinnell.csc207.util.KeyNotFoundException;
+import edu.grinnell.csc207.util.NullKeyException;
+
+import java.nio.file.Files;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+
+
 /**
  * Creates a set of mappings of an AAC that has two levels,
  * one for categories and then within each category, it has
@@ -6,10 +21,14 @@
  * and updating the set of images that would be shown and handling
  * an interactions.
  * 
- * @author Catie Baker & YOUR NAME HERE
+ * @author Catie Baker & Alex Cyphers
  *
  */
 public class AACMappings implements AACPage {
+
+	private AssociativeArray<String, AACCategory> locs;
+	private AACCategory currLoc;
+	private AACCategory defaultLoc;
 	
 	/**
 	 * Creates a set of mappings for the AAC based on the provided
@@ -32,7 +51,34 @@ public class AACMappings implements AACPage {
 	 * @param filename the name of the file that stores the mapping information
 	 */
 	public AACMappings(String filename) {
-
+		this.locs = new AssociativeArray<>();
+		this.defaultLoc = new AACCategory("");
+		this.currLoc = this.defaultLoc;
+		try {
+			Scanner scanner = new Scanner(new File(filename));
+		
+			AACCategory tempLoc = null;
+			while (scanner.hasNextLine()) {
+				String line = scanner.nextLine();
+				if (line.startsWith(">")) {
+					String[] text = line.substring(1).split(" ", 2);
+					if (tempLoc != null) {
+						tempLoc.addItem(text[0], text[1]);
+					} // if
+				} else {
+					String[] text = line.split(" ", 2);
+					tempLoc = new AACCategory(text[1]);
+					try {
+						this.locs.set(text[0], tempLoc);
+					} catch (NullKeyException e) {
+						// There should not be a null key
+					} // try-catch
+				}
+			}
+			scanner.close();
+		} catch (FileNotFoundException e) {
+		throw new NullPointerException("Null Pointer");
+		}
 	}
 	
 	/**
@@ -50,7 +96,15 @@ public class AACMappings implements AACPage {
 	 * category
 	 */
 	public String select(String imageLoc) {
-		return null;
+		if (this.currLoc == this.defaultLoc) {
+			try {
+				return this.locs.get(imageLoc).toString();
+			} catch (KeyNotFoundException e) {
+				throw new NoSuchElementException("No such Element");
+			} // try-catch
+		} else {
+			return this.currLoc.select(imageLoc);
+		} // try-catch
 	}
 	
 	/**
@@ -59,7 +113,7 @@ public class AACMappings implements AACPage {
 	 * it should return an empty array
 	 */
 	public String[] getImageLocs() {
-		return null;
+		return this.currLoc.getImageLocs();
 	}
 	
 	/**
@@ -67,7 +121,7 @@ public class AACMappings implements AACPage {
 	 * category
 	 */
 	public void reset() {
-
+		this.currLoc = this.defaultLoc;
 	}
 	
 	
@@ -92,7 +146,21 @@ public class AACMappings implements AACPage {
 	 * AAC mapping to
 	 */
 	public void writeToFile(String filename) {
-		
+		try {
+			PrintWriter pen = new PrintWriter(new File(filename));
+			for (int i = 0; i < this.locs.size(); i++) {
+				//String name = this.locs.getVal(i);
+				AACCategory category = this.locs.getVal(i);
+				pen.println(category.getCategory());
+				String[] imageLocs = category.getImageLocs();
+				for (int j = 0; j < imageLocs.length; j++) {
+					pen.println(">" + imageLocs[j] + " " + category.select(imageLocs[j]));
+				}
+			}
+			pen.close();
+		} catch (FileNotFoundException e) {
+			// Empty file
+		}
 	}
 	
 	/**
@@ -102,7 +170,7 @@ public class AACMappings implements AACPage {
 	 * @param text the text associated with the image
 	 */
 	public void addItem(String imageLoc, String text) {
-		
+		this.currLoc.addItem(imageLoc, text);
 	}
 
 
@@ -112,7 +180,7 @@ public class AACMappings implements AACPage {
 	 * on the default category
 	 */
 	public String getCategory() {
-		return null;
+		return this.currLoc.getCategory();
 	}
 
 
@@ -124,6 +192,7 @@ public class AACMappings implements AACPage {
 	 * can be displayed, false otherwise
 	 */
 	public boolean hasImage(String imageLoc) {
-		return false;
+		return this.currLoc.hasImage(imageLoc);
 	}
 }
+
