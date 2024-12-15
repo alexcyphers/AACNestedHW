@@ -56,10 +56,15 @@ public class AACMappings implements AACPage {
 		this.currLoc = this.defaultLoc;
 		try {
 			Scanner scanner = new Scanner(new File(filename));
-		
 			AACCategory tempLoc = null;
+
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
+
+				if (line.isEmpty()) {
+					continue;
+				} // if
+
 				if (line.startsWith(">")) {
 					String[] text = line.substring(1).split(" ", 2);
 					if (tempLoc != null) {
@@ -73,13 +78,13 @@ public class AACMappings implements AACPage {
 					} catch (NullKeyException e) {
 						// There should not be a null key
 					} // try-catch
-				}
-			}
+				} // if/else
+			} // while-loop
 			scanner.close();
 		} catch (FileNotFoundException e) {
-		throw new NullPointerException("Null Pointer");
-		}
-	}
+			throw new NullPointerException("Null Pointer");
+		} // try/catch
+	} // AACMappings(String)
 	
 	/**
 	 * Given the image location selected, it determines the action to be
@@ -98,14 +103,19 @@ public class AACMappings implements AACPage {
 	public String select(String imageLoc) {
 		if (this.currLoc == this.defaultLoc) {
 			try {
-				return this.locs.get(imageLoc).toString();
+				this.currLoc = this.locs.get(imageLoc);
+				return "";
 			} catch (KeyNotFoundException e) {
 				throw new NoSuchElementException("No such Element");
 			} // try-catch
 		} else {
-			return this.currLoc.select(imageLoc);
+			if (this.currLoc.hasImage(imageLoc)) {
+				return this.currLoc.select(imageLoc);
+			} else {
+				throw new NoSuchElementException("Item not found");
+			} // if/else
 		} // try-catch
-	}
+	} // select(String)
 	
 	/**
 	 * Provides an array of all the images in the current category
@@ -113,8 +123,12 @@ public class AACMappings implements AACPage {
 	 * it should return an empty array
 	 */
 	public String[] getImageLocs() {
-		return this.currLoc.getImageLocs();
-	}
+		if (this.currLoc == this.defaultLoc) {
+			return this.locs.keyStrings();
+		} else {
+			return this.currLoc.getImageLocs();
+		} // if/else
+	} // getImageLocs()
 	
 	/**
 	 * Resets the current category of the AAC back to the default
@@ -122,7 +136,7 @@ public class AACMappings implements AACPage {
 	 */
 	public void reset() {
 		this.currLoc = this.defaultLoc;
-	}
+	} // reset()
 	
 	
 	/**
@@ -149,19 +163,18 @@ public class AACMappings implements AACPage {
 		try {
 			PrintWriter pen = new PrintWriter(new File(filename));
 			for (int i = 0; i < this.locs.size(); i++) {
-				//String name = this.locs.getVal(i);
-				AACCategory category = this.locs.getVal(i);
+				AACCategory category = new AACCategory(filename);
 				pen.println(category.getCategory());
 				String[] imageLocs = category.getImageLocs();
 				for (int j = 0; j < imageLocs.length; j++) {
 					pen.println(">" + imageLocs[j] + " " + category.select(imageLocs[j]));
-				}
-			}
+				} // for-loop
+			} // for-loop
 			pen.close();
 		} catch (FileNotFoundException e) {
 			// Empty file
-		}
-	}
+		} // try/catch
+	} // writeToFile(String)
 	
 	/**
 	 * Adds the mapping to the current category (or the default category if
@@ -170,8 +183,17 @@ public class AACMappings implements AACPage {
 	 * @param text the text associated with the image
 	 */
 	public void addItem(String imageLoc, String text) {
-		this.currLoc.addItem(imageLoc, text);
-	}
+		if (this.currLoc == this.defaultLoc) {
+			AACCategory category = new AACCategory(text);
+			try {
+				this.locs.set(imageLoc, category);
+			} catch (NullKeyException e) {
+				// Null Key
+			} // try/catch
+		} else {
+			this.currLoc.addItem(imageLoc, text);
+		} // if/else
+	} // addItem(String, String)
 
 
 	/**
@@ -181,7 +203,7 @@ public class AACMappings implements AACPage {
 	 */
 	public String getCategory() {
 		return this.currLoc.getCategory();
-	}
+	} // getCategory()
 
 
 	/**
@@ -193,6 +215,6 @@ public class AACMappings implements AACPage {
 	 */
 	public boolean hasImage(String imageLoc) {
 		return this.currLoc.hasImage(imageLoc);
-	}
+	} // hasImage(String)
 }
 
