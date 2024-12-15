@@ -12,8 +12,15 @@ import edu.grinnell.csc207.util.NullKeyException;
  */
 public class AACCategory implements AACPage {
 
-
+	/*
+	 * An associative array used to map the image locations to the
+	 * text that the image should speak.
+	 */
 	private AssociativeArray<String, String> locs;
+
+	/*
+	 * The name of the category.
+	 */
 	private String name;
 
 	/**
