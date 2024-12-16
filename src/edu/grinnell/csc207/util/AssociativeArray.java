@@ -226,13 +226,18 @@ public class AssociativeArray<K, V> {
     this.size--;
   } // remove(K)
 
+  /**
+   * Creates an array of the keys as strings.
+   * 
+   * @return the string array of keys.
+   */
   public String[] keyStrings() {
     String[] keys = new String[this.size];
     for (int i = 0; i < this.size; i++) {
       keys[i] = this.pairs[i].key.toString();
     } // for-loop
     return keys;
-  }
+  } // keyStrings()
 
   /**
    * Determine how many key/value pairs are in the associative array.
