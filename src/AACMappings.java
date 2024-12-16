@@ -76,18 +76,18 @@ public class AACMappings implements AACPage {
 				} // if
 
 				if (line.startsWith(">")) {
-					String[] text = line.substring(1).split(" ", 2);
-					if (tempLoc != null) {
-						tempLoc.addItem(text[0], text[1]);
-					} // if
+					String image = line.substring(1, line.indexOf(" "));
+					String text = line.substring(line.indexOf(" ") + 1);
+					tempLoc.addItem(image, text);
 				} else {
-					String[] text = line.split(" ", 2);
-					tempLoc = new AACCategory(text[1]);
+					String image = line.substring(0, line.indexOf(" "));
+					String text = line.substring(line.indexOf(" ") + 1);
+					tempLoc = new AACCategory(text);
 					try {
-						this.categories.set(text[0], tempLoc);
+						this.categories.set(image, tempLoc);
 					} catch (NullKeyException e) {
-						// There should not be a null key.
-					} // try-catch
+						// Should not recieve a null key.
+					} // try/catch
 				} // if/else
 			} // while-loop
 			scanner.close();
